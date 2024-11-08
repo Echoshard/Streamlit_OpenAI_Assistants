@@ -30,8 +30,8 @@ isKeyed = True
 fetch_assistants = False
 # Youtube does not work when hosted on servers for some reason needs to be local?
 # https://stackoverflow.com/questions/78860581/error-fetching-youtube-transcript-using-youtubetranscriptapi-on-server-but-works
-disable_youtube = False
-disable_url_scrape = False
+disable_youtube = True
+disable_url_scrape = True
 
 #---------------------------- URL Transcriptions
 
@@ -76,35 +76,7 @@ def scrape_website(url):
         return text
     except Exception as e:
         return f"❌Error scraping website: {e}"
-    
-#----------------------------------------------------- Image Uploader
 
-def attach_image_to_thread(attachment, thread_id):
-    print(f"🔎Attaching file {attachment}")
-    client = OpenAI(api_key=st.session_state.api_key)
-    
-    upload_response = client.files.create(
-        purpose='vision',
-        file=attachment
-    )
-    # Attach file to thread
-    client.beta.threads.messages.create(
-        thread_id=thread_id,
-        role="user",
-        content=[
-            {
-                "type": "text",
-                "text": "Picture Uploaded"
-            },
-            {
-                "type": "image_file",
-                "image_file": {
-                    "file_id": upload_response.id,
-                    "detail": "high"
-                }
-            }
-        ]
-    )
     
 #---------------------------------------------------- Open AI Thread and cleaning
 # Clean Thread
@@ -182,15 +154,6 @@ def list_assistants():
 
     return options
 
-
-
-# # Fetch the assistants if the flag is set
-# if 'options' not in st.session_state and fetch_assistants:
-    
-
-# else:
-#     st.session_state.assistant_id = st.session_state.options.get(default_assistant, None)
-
 if fetch_assistants:
     st.session_state.options = list_assistants()
     st.rerun()
@@ -199,11 +162,6 @@ if fetch_assistants:
     st.session_state.assistant_id = st.session_state.options[selected_assistant]
 
 #--------------------------------------------------------------- System Prompt and Thread buttons
-
-
-
-
-uploaded_image = st.sidebar.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
 # Buttons
 if st.sidebar.button("Clear/New Thread", use_container_width=True):
