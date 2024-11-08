@@ -170,6 +170,7 @@ if st.sidebar.button("Clear/New Thread", use_container_width=True):
     if st.session_state.assistant_id == "":
         st.error("No assistant for thread")
     else:
+        st.toast("Memory Cleared")
         st.session_state.thread_id = clean_create_thread()
         
 #------------------------------------------------------------------------ Stream end and File Upload Cleaning
