@@ -122,7 +122,7 @@ st.set_page_config(page_title="🕵️OpenAI Assistants🕵️", page_icon=":spe
 
 # Sidebar settings
 st.sidebar.header('🕵️ OpenAI Assistants 🕵️')
-st.sidebar.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHV6dmJjMmFic2lma3ZoaHJnaHY4d2VvMXJ0c3NpcTA3dGc5N2VoNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/kgAzAJl4eUZzO/giphy.webp")
+st.sidebar.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmZvNTgzNHI5dm4ybnh1ZjY1bGtxc3E4dHBpMnhubzNhZnliZjU4MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7VzgMsB6FLCilwS30v/giphy.webp")
 
 if isKeyed:
     st.session_state.api_key = api_key
