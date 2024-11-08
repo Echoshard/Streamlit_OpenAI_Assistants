@@ -156,7 +156,6 @@ def list_assistants():
 
 if fetch_assistants:
     st.session_state.options = list_assistants()
-    st.rerun()
     # Create a sidebar with a dropdown menu
     selected_assistant = st.sidebar.selectbox("Assistants", list(st.session_state.options.keys()))
     st.session_state.assistant_id = st.session_state.options[selected_assistant]
