@@ -230,7 +230,7 @@ def main_chat():
     else:
         # Prompt to start the chat
         st.header('Enter API Key and Assistant ID', divider='rainbow')
-        st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcGlqcGxmaHE2ajM3YnBrMGV0dDdwbTF6NXd5aWM2MXJzMWZubWpqayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/273P92MBOqLiU/giphy.gif")
+        st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmZvNTgzNHI5dm4ybnh1ZjY1bGtxc3E4dHBpMnhubzNhZnliZjU4MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7VzgMsB6FLCilwS30v/giphy.webp")
 if st.query_params.__contains__("secretkey") and st.query_params["secretkey"] == secretKey:
     main_chat()
     st.sidebar.markdown(f"ThreadID: ```{st.session_state.thread_id}```")
