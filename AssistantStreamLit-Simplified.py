@@ -118,10 +118,10 @@ st.session_state.setdefault('api_key', api_key)
 
 st.session_state.setdefault('systemPrompt', "You are a friendly and helpful assistant.")
 st.session_state.setdefault('preprompt', "")
-st.set_page_config(page_title="🕵️Assistant Agent🕵️", page_icon=":speech_balloon:",layout="wide")
+st.set_page_config(page_title="🕵️OpenAI Assistants🕵️", page_icon=":speech_balloon:",layout="wide")
 
 # Sidebar settings
-st.sidebar.header('🕵️ Assistant Agent 🕵️')
+st.sidebar.header('🕵️ OpenAI Assistants 🕵️')
 st.sidebar.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHV6dmJjMmFic2lma3ZoaHJnaHY4d2VvMXJ0c3NpcTA3dGc5N2VoNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/kgAzAJl4eUZzO/giphy.webp")
 
 if isKeyed:
