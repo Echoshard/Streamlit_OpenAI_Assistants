@@ -13,10 +13,15 @@ from io import BytesIO
 
 #-------------------------- Secrets from OPEN AI 
 #Do Not push secrets to Github!
+#EnvSecrets
+api_key = os.environ.get("api-api_key")
+default_assistant = os.environ.get("assistant_id")
+secretKey = os.environ.get("secretKey")
 
-api_key = st.secrets["api_key"]
-default_assistant = st.secrets["assistant_id"]
-secretKey = st.secrets["secretKey"]
+#Streamlit Secrets
+#api_key = st.secrets["api_key"]
+#default_assistant = st.secrets["assistant_id"]
+#secretKey = st.secrets["secretKey"]
 #For quickly running local put your API keys and comment out the above area
 #api_key = "FOR KEYED"
 #default_assistant = "assistantKEY"
