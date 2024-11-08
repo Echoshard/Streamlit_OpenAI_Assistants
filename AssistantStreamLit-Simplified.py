@@ -27,7 +27,7 @@ secretKey = os.environ.get("secretKey")
 #default_assistant = "assistantKEY"
 isKeyed = True
 # Boolean flag to determine if assistants should be fetched
-fetch_assistants = False
+fetch_assistants = True
 # Youtube does not work when hosted on servers for some reason needs to be local?
 # https://stackoverflow.com/questions/78860581/error-fetching-youtube-transcript-using-youtubetranscriptapi-on-server-but-works
 disable_youtube = True
