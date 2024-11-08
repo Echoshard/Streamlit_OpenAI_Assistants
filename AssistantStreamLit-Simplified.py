@@ -182,57 +182,49 @@ def on_stream_start(user_input):
     print("AI Stream Started")
 
 def main_chat():
-    # Only show the chat interface if the chat has been started
-    if st.session_state.assistant_id != "" and st.session_state.api_key != "":
-        # Initialize the model and messages list if not already in session state
-        client = OpenAI(api_key=st.session_state.api_key)
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-        # Display existing messages in the chat
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-        # Chat input for the user
-        if prompt := st.chat_input("What is up?"):
-            if st.session_state.thread_id is None:
-                st.session_state.thread_id = clean_create_thread()
-                st.empty()
+    # Initialize the model and messages list if not already in session state
+    client = OpenAI(api_key=st.session_state.api_key)
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    # Display existing messages in the chat
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    # Chat input for the user
+    if prompt := st.chat_input("What is up?"):
+        if st.session_state.thread_id is None:
+            st.session_state.thread_id = clean_create_thread()
+            st.empty()
 
-            # Detect URLs in the prompt and replace with transcripts or scraped text for processing
-            urls = re.findall(r'(https?://\S+)', prompt)
-            processed_prompt = prompt
-            for url in urls:
-                transcript = get_transcript_from_url(url)
-                processed_prompt = processed_prompt.replace(url, transcript)
-                
-            # Add user message to the state and display it (keep original URL and file name)
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user"):
-                if(uploaded_image) is not None:
-                    prompt = prompt + " Image uploaded: " + uploaded_image.name
-                st.markdown(prompt)
-            # Add the processed message to the existing thread
-            client.beta.threads.messages.create(
+        # Detect URLs in the prompt and replace with transcripts or scraped text for processing
+        urls = re.findall(r'(https?://\S+)', prompt)
+        processed_prompt = prompt
+        for url in urls:
+            transcript = get_transcript_from_url(url)
+            processed_prompt = processed_prompt.replace(url, transcript)
+            
+        # Add user message to the state and display it (keep original URL and file name)
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        # Add the processed message to the existing thread
+        client.beta.threads.messages.create(
+            thread_id=st.session_state.thread_id,
+            role="user",
+            content=processed_prompt
+        )
+        # Streaming run    
+        on_stream_start(prompt)
+        streamingText = ""
+        with st.chat_message("assistant"):
+            with client.beta.threads.runs.stream(
                 thread_id=st.session_state.thread_id,
-                role="user",
-                content=processed_prompt
-            )
-            # Streaming run    
-            on_stream_start(prompt)
-            streamingText = ""
-            with st.chat_message("assistant"):
-                with client.beta.threads.runs.stream(
-                    thread_id=st.session_state.thread_id,
-                    assistant_id=st.session_state.assistant_id,
-                ) as stream:
-                    response = st.write_stream(stream.text_deltas)
-                    st.session_state.messages.append({"role": "assistant", "content": response})
-                on_stream_done(prompt,response)
-
-    else:
-        # Prompt to start the chat
-        st.header('Enter API Key and Assistant ID', divider='rainbow')
-        st.image(error_image)
+                assistant_id=st.session_state.assistant_id,
+            ) as stream:
+                response = st.write_stream(stream.text_deltas)
+                st.session_state.messages.append({"role": "assistant", "content": response})
+            on_stream_done(prompt,response)
+        
 if st.query_params.__contains__("secretkey") and st.query_params["secretkey"] == secretKey:
     main_chat()
     st.sidebar.markdown(f"ThreadID: ```{st.session_state.thread_id}```")
