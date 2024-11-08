@@ -33,6 +33,9 @@ fetch_assistants = True
 disable_youtube = True
 disable_url_scrape = True
 
+side_bar_image = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmZvNTgzNHI5dm4ybnh1ZjY1bGtxc3E4dHBpMnhubzNhZnliZjU4MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7VzgMsB6FLCilwS30v/giphy.webp"
+error_image = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcGlqcGxmaHE2ajM3YnBrMGV0dDdwbTF6NXd5aWM2MXJzMWZubWpqayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/273P92MBOqLiU/giphy.gif"
+
 #---------------------------- URL Transcriptions
 
 # Function to get transcript or scraped text from URL
@@ -118,11 +121,11 @@ st.session_state.setdefault('api_key', api_key)
 
 st.session_state.setdefault('systemPrompt', "You are a friendly and helpful assistant.")
 st.session_state.setdefault('preprompt', "")
-st.set_page_config(page_title="🕵️OpenAI Assistants🕵️", page_icon=":speech_balloon:",layout="wide")
+st.set_page_config(page_title="AI Assistants", page_icon=":speech_balloon:",layout="wide")
 
 # Sidebar settings
-st.sidebar.header('🕵️ OpenAI Assistants 🕵️')
-st.sidebar.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmZvNTgzNHI5dm4ybnh1ZjY1bGtxc3E4dHBpMnhubzNhZnliZjU4MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7VzgMsB6FLCilwS30v/giphy.webp")
+st.sidebar.header('AI Assistants')
+st.sidebar.image(side_bar_image)
 
 if isKeyed:
     st.session_state.api_key = api_key
@@ -229,7 +232,7 @@ def main_chat():
     else:
         # Prompt to start the chat
         st.header('Enter API Key and Assistant ID', divider='rainbow')
-        st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmZvNTgzNHI5dm4ybnh1ZjY1bGtxc3E4dHBpMnhubzNhZnliZjU4MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7VzgMsB6FLCilwS30v/giphy.webp")
+        st.image(error_image)
 if st.query_params.__contains__("secretkey") and st.query_params["secretkey"] == secretKey:
     main_chat()
     st.sidebar.markdown(f"ThreadID: ```{st.session_state.thread_id}```")
@@ -237,7 +240,7 @@ if st.query_params.__contains__("secretkey") and st.query_params["secretkey"] ==
     st.sidebar.link_button("Set your Assistant here", "https://platform.openai.com/assistants")
 else:
     st.header('Access is Denied', divider='rainbow')
-    st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcGlqcGxmaHE2ajM3YnBrMGV0dDdwbTF6NXd5aWM2MXJzMWZubWpqayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/273P92MBOqLiU/giphy.gif")
+    st.image(error_image)
 
 
 
