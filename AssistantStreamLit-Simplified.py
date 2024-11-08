@@ -14,7 +14,7 @@ from io import BytesIO
 #-------------------------- Secrets from OPEN AI 
 #Do Not push secrets to Github!
 #EnvSecrets
-api_key = os.environ.get("api-api_key")
+api_key = os.environ.get("api_key")
 default_assistant = os.environ.get("assistant_id")
 secretKey = os.environ.get("secretKey")
 
