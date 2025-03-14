@@ -10,8 +10,8 @@ This StreamLit bot uses the assistants API with threads.
 - youtube transcript scraping (LOCAL only static IP's are blocked)
 - File upload (Text files are put in stream not uploaded to thread)
 - Vision (Image upload)
-- private Keying and assistant switching
-- thread clearing
+- Private Keying and assistant switching
+- Thread clearing
 
 A note that uploading files or vision will add to your openAI storage. 
 
