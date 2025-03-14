@@ -11,33 +11,52 @@ import fitz  # PyMuPDF
 from io import BytesIO
 
 
-#-------------------------- Secrets from OPEN AI 
-#Do Not push secrets to Github!
-#EnvSecrets
-api_key = os.environ.get("api_key")
-default_assistant = os.environ.get("assistant_id")
-secretKey = os.environ.get("secretKey")
+#-------------------------- TOM Secrets
+api_key = st.secrets["api_key"]
+default_assistant = st.secrets["default_assistant"]
+secret_key = st.secrets["secret_key"]
 
-#Streamlit Secrets
-#api_key = st.secrets["api_key"]
-#default_assistant = st.secrets["assistant_id"]
-#secretKey = st.secrets["secretKey"]
+
 #For quickly running local put your API keys and comment out the above area
-#api_key = "FOR KEYED"
-#default_assistant = "assistantKEY"
-isKeyed = True
+# api_key = ""
+# default_assistant = ""
+# secret_key = ""
+
+#.env
+# api_key = os.environ.get("api_key")
+# default_assistant = os.environ.get("assistant_id")
+# secret_key = os.environ.get("secret_key")
+
+#Secret Key / this is just an example you could add database auth to this
+requireKey = False
 # Boolean flag to determine if assistants should be fetched
 fetch_assistants = True
 # Youtube does not work when hosted on servers for some reason needs to be local?
 # https://stackoverflow.com/questions/78860581/error-fetching-youtube-transcript-using-youtubetranscriptapi-on-server-but-works
-disable_youtube = True
-disable_url_scrape = True
 
-side_bar_image = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmZvNTgzNHI5dm4ybnh1ZjY1bGtxc3E4dHBpMnhubzNhZnliZjU4MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7VzgMsB6FLCilwS30v/giphy.webp"
+#Extra features settings
+disable_youtube = True
+disable_scraping = False
+disable_fileUpload = False
+
+
+botTitle = "OpenAI Assistants"
+botdescription = ""
+
+#These are the avatar settings
+userAvatar = None
+aiAvatar = None
+# userAvatar = ":material/face:" 
+# aiAvatar = ":material/neurology:"
+# userAvatar = "⌨️" 
+# aiAvatar = "🖥️"
+
+#Gifs for Images!
+side_bar_image = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXY4djdoaWpwbzV6bGp1eTkzdWZ0dnI3M2s1bDIzbDFrM2w4amdicCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2hgs0P312wdBCOgOAf/giphy.webp"
 error_image = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcGlqcGxmaHE2ajM3YnBrMGV0dDdwbTF6NXd5aWM2MXJzMWZubWpqayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/273P92MBOqLiU/giphy.gif"
 
-#---------------------------- URL Transcriptions
 
+#---------------------------- URL Transcriptions
 # Function to get transcript or scraped text from URL
 def get_transcript_from_url(url):
     if "youtube.com" in url or "youtu.be" in url:
@@ -68,8 +87,8 @@ def extract_youtube_video_id(url):
 
 # Function to scrape website content
 def scrape_website(url):
-    if disable_url_scrape:
-        return "Url Scraping is Disabled"
+    if disable_scraping:
+        return "Scraping is Disabled"
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -79,9 +98,57 @@ def scrape_website(url):
         return text
     except Exception as e:
         return f"❌Error scraping website: {e}"
+    
+#---------------------------------------------------- Text File Extraction PDF/TXT
+# Function to read text from PDF file
+def read_pdf(file):
+    try:
+        doc = fitz.open(stream=file.read(), filetype="pdf")
+        text = ""
+        for page in doc:
+            text += page.get_text()
+        return text
+    except Exception as e:
+        return f"❌Error reading PDF file: {e}"
 
+# Function to read text from TXT file
+def read_txt(file):
+    try:
+        return file.read().decode("utf-8")
+    except Exception as e:
+        return f"❌Error reading TXT file: {e}"
+    
+#----------------------------------------------------- Image Uploader
+
+def attach_image_to_thread(attachment, thread_id):
+    print(f"🔎Attaching file {attachment}")
+    client = OpenAI(api_key=st.session_state.api_key)
+    
+    upload_response = client.files.create(
+        purpose='vision',
+        file=attachment
+    )
+    # Attach file to thread
+    client.beta.threads.messages.create(
+        thread_id=thread_id,
+        role="user",
+        content=[
+            {
+                "type": "text",
+                "text": "Picture Uploaded"
+            },
+            {
+                "type": "image_file",
+                "image_file": {
+                    "file_id": upload_response.id,
+                    "detail": "high"
+                }
+            }
+        ]
+    )
     
 #---------------------------------------------------- Open AI Thread and cleaning
+
 # Clean Thread
 def clean_create_thread(thread_id=None):
     client = OpenAI(api_key=st.session_state.api_key)
@@ -114,26 +181,17 @@ def clean_create_thread(thread_id=None):
         
         
 #----------------------------------------------------- StreamLit UI
+
 # Session States
 st.session_state.setdefault('thread_id', None)
 st.session_state.setdefault('assistant_id', default_assistant)
 st.session_state.setdefault('api_key', api_key)
-
-st.session_state.setdefault('systemPrompt', "You are a friendly and helpful assistant.")
-st.session_state.setdefault('preprompt', "")
-st.set_page_config(page_title="AI Assistants", page_icon=":speech_balloon:",layout="wide")
+st.set_page_config(page_title=botTitle, page_icon=":speech_balloon:",layout="wide")
 
 # Sidebar settings
-st.sidebar.header('AI Assistants')
+st.sidebar.markdown(f"<h1 style='text-align: center;'>{botTitle}</h1>", unsafe_allow_html=True)
+st.sidebar.markdown(f"<h4 style='text-align: center;'>{botdescription}</h4>", unsafe_allow_html=True)
 st.sidebar.image(side_bar_image)
-
-if isKeyed:
-    st.session_state.api_key = api_key
-    st.session_state.assistant_id = default_assistant
-else:
-    st.session_state.api_key = st.sidebar.text_input('OpenAI API Key')
-    st.session_state.assistant_id = st.sidebar.text_input('Assistant ID')
-
 
 #--------------------------------------------------------------- Assistant List
 
@@ -154,11 +212,14 @@ def list_assistants():
     for assistant in assistants.data:
         if assistant.name != "Default Assistant":
             options[assistant.name] = assistant.id
-
     return options
 
+# Fetch the assistants if the flag is set
 if fetch_assistants:
     st.session_state.options = list_assistants()
+    if len(st.session_state.options) == 0:
+        st.error("No assistants found. Please check API key or setup assistants")
+        st.stop()
     # Create a sidebar with a dropdown menu
     selected_assistant = st.sidebar.selectbox("Assistants", list(st.session_state.options.keys()))
     st.session_state.assistant_id = st.session_state.options[selected_assistant]
@@ -181,6 +242,8 @@ def on_stream_done(user_input,agent_output):
 def on_stream_start(user_input):
     #a stub for accessing input and output
     print("AI Stream Started")
+    
+
 
 def main_chat():
     # Initialize the model and messages list if not already in session state
@@ -189,55 +252,87 @@ def main_chat():
         st.session_state.messages = []
     # Display existing messages in the chat
     for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        if message["role"] == "user":             
+            with st.chat_message(message["role"],avatar = userAvatar):
+                st.markdown(message["content"])
+        else:
+            with st.chat_message(message["role"],avatar = aiAvatar):
+                st.markdown(message["content"])
     # Chat input for the user
-    if prompt := st.chat_input("What is up?"):
+    if prompt := st.chat_input(
+        placeholder="What is up?",
+        accept_file=not disable_fileUpload, # Allow file uploads if not disabled
+        file_type=["txt", "csv", "py", "cs", "ts", "js", "pdf", "html", "md", "xml", "yaml", "yml", "sql", "css", "php","png","jpeg","jpg"]
+    ):
+        if prompt.text.lower() in ["/clear", "/clean"]:
+            st.session_state.thread_id = clean_create_thread()
+            return
         if st.session_state.thread_id is None:
             st.session_state.thread_id = clean_create_thread()
             st.empty()
-
-        # Detect URLs in the prompt and replace with transcripts or scraped text for processing
-        urls = re.findall(r'(https?://\S+)', prompt)
-        processed_prompt = prompt
+    
+        # Replace URLs in the prompt with their transcripts or scraped text.
+        urls = re.findall(r'(https?://\S+)', prompt.text)
+        processed_prompt = prompt.text
         for url in urls:
             transcript = get_transcript_from_url(url)
             processed_prompt = processed_prompt.replace(url, transcript)
-            
+    
+        # Process uploaded files.
+        if prompt and prompt["files"]:
+            for file in prompt["files"]:
+                if file.type == "application/pdf":
+                    file_text = read_pdf(file)
+                elif file.type in ["image/jpeg", "image/png"]:
+                    st.session_state.messages.append({"role": "user", "content": "Image uploaded"})
+                    prompt.text += f" Image uploaded: {file.name}"
+                    attach_image_to_thread(file, st.session_state.thread_id)
+                    continue
+                else:
+                    # For all other text-based files (e.g. txt, csv, py, cs, php, etc.)
+                    file_text = file.read().decode("utf-8")
+                processed_prompt += "\n" + file_text
+                processed_prompt += f"\nFile: {file.name}"
+                st.session_state.messages.append({"role": "user", "content": "File Uploaded"})
+                prompt.text += f" File uploaded: {file.name}"
         # Add user message to the state and display it (keep original URL and file name)
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt.text})
+        with st.chat_message("user",avatar = userAvatar):
+            st.markdown(prompt.text)
+        print(processed_prompt)
         # Add the processed message to the existing thread
         client.beta.threads.messages.create(
             thread_id=st.session_state.thread_id,
             role="user",
             content=processed_prompt
         )
-        # Streaming run    
-        on_stream_start(prompt)
         streamingText = ""
-        with st.chat_message("assistant"):
-            with client.beta.threads.runs.stream(
-                thread_id=st.session_state.thread_id,
-                assistant_id=st.session_state.assistant_id,
-            ) as stream:
-                response = st.write_stream(stream.text_deltas)
-                st.session_state.messages.append({"role": "assistant", "content": response})
-            on_stream_done(prompt,response)
-        
-if st.query_params.__contains__("secretkey") and st.query_params["secretkey"] == secretKey:
+        with st.spinner('Processing..'):
+            on_stream_start(processed_prompt)
+            with st.chat_message("assistant",avatar = aiAvatar):
+                with client.beta.threads.runs.stream(
+                  thread_id=st.session_state.thread_id,
+                  assistant_id=st.session_state.assistant_id,
+                ) as stream:
+                    response = st.write_stream(stream.text_deltas)
+                    st.session_state.messages.append({"role": "assistant", "content": response})
+                on_stream_done(prompt,response)
+ 
+
+def chat_loop():
     main_chat()
     st.sidebar.markdown(f"ThreadID: ```{st.session_state.thread_id}```")
     st.sidebar.markdown(f"Assistant: ```{st.session_state.assistant_id}```")
     st.sidebar.link_button("Set your Assistant here", "https://platform.openai.com/assistants")
+    st.sidebar.markdown("🤖 Assistants can make mistakes; please check the code and documentation before using it.");
+    st.sidebar.markdown("⚠️ Please note that chats are not saved. If you navigate away from this page, you will lose your conversation.")
+
+#Main Loop
+if requireKey:
+    if st.query_params.__contains__("secretkey") and st.query_params["secretkey"] == secret_key:
+        chat_loop()
+    else:
+        st.header('Access is Denied', divider='rainbow')
+        st.image(error_image)
 else:
-    st.header('Access is Denied', divider='rainbow')
-    st.image(error_image)
-
-
-
-
-# Display current data
-
-
+    chat_loop()
