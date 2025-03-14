@@ -71,7 +71,7 @@ www.yourStreamLitAssistant.com/?secretkey=SECRET
 ```
 
 ```
- python -m streamlit run PATH:\\AssistantChatStreamLit.py
+ python -m streamlit run PATH:\\AssistantStreamLit-Simplified.py
 ```
 
 # Hosting your App:
