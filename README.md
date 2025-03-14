@@ -41,10 +41,7 @@ Additionally there are settings for plain text and setting a .env. Uncomment and
 
 As for the rest of the settings.
 
-User will have to input their own API key 
-```
-requireKey = False
-```
+
 This will fetch all the assistants listed on this OpenAI's project account if set to false it will only talk to the default assistant. Useful for sharing a bunch of GPTS the assistant named `Default Assistant` Will always be at the top of the list if it exists
 
 ```
@@ -58,8 +55,6 @@ disable_youtube = True
 disable_scraping = False
 disable_fileUpload = False
 ```
-
-
 
 ## Using the Secret Key
 
