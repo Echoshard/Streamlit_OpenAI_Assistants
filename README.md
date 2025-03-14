@@ -9,7 +9,7 @@ This StreamLit bot uses the assistants API with threads.
 - Webscraping 
 - youtube transcript scraping (LOCAL only static IP's are blocked)
 - File upload (Text files are put in stream not uploaded to thread)
-- gpt-4o Vision (Image upload)
+- Vision (Image upload)
 - private Keying and assistant switching
 - thread clearing
 
