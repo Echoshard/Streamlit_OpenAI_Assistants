@@ -21,7 +21,6 @@ secret_key = st.secrets["secret_key"]
 # api_key = ""
 # default_assistant = ""
 # secret_key = ""
-
 #.env
 # api_key = os.environ.get("api_key")
 # default_assistant = os.environ.get("assistant_id")
@@ -307,7 +306,7 @@ def main_chat():
             content=processed_prompt
         )
         streamingText = ""
-        with st.spinner('Processing..'):
+        with st.spinner('Processing..',show_time=True):
             on_stream_start(processed_prompt)
             with st.chat_message("assistant",avatar = aiAvatar):
                 with client.beta.threads.runs.stream(
@@ -324,8 +323,10 @@ def chat_loop():
     st.sidebar.markdown(f"ThreadID: ```{st.session_state.thread_id}```")
     st.sidebar.markdown(f"Assistant: ```{st.session_state.assistant_id}```")
     st.sidebar.link_button("Set your Assistant here", "https://platform.openai.com/assistants")
-    st.sidebar.markdown("🤖 Assistants can make mistakes; please check the code and documentation before using it.");
-    st.sidebar.markdown("⚠️ Please note that chats are not saved. If you navigate away from this page, you will lose your conversation.")
+    # st.sidebar.markdown("Images | PDFs | Text files these are scraped for text keep under 5 megs")
+    # st.sidebar.markdown("Links are automaticaly scraped for text")
+    st.sidebar.markdown("🤖 Assistants can make mistakes please check their work");
+    st.sidebar.markdown("⚠️ Please note that chats are not saved. If you navigate away from this page, you will lose your conversation")
 
 #Main Loop
 if requireKey:
@@ -336,3 +337,5 @@ if requireKey:
         st.image(error_image)
 else:
     chat_loop()
+
+
