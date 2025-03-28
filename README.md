@@ -6,36 +6,37 @@ This StreamLit bot uses the assistants API with threads.
 
 ### Supports
 
-- Webscraping 
-
+- Web scraping 
 - File upload (Text files are put in stream not uploaded to thread)
 - Vision (Image upload)
-- Private Keying and assistant switching
+- Private keying
+- Assistant loading and switching
 - Thread clearing
-- youtube transcript scraping (youtube blocks it constantly)
+- Youtube transcript 'unstable'
 
 A note that uploading files or vision will add to your openAI storage. 
 
 ### Configuration
 
-When running on streamlit cloud this can be configured for a secret key and assistant API or the user can insert there own keys and assistant IDs.
+When running on Streamlit cloud this can be configured for a secret key and assistant API or the user can insert there own keys and assistant IDs.
 
 ```
-api_key = "OPENAI KEY"
-default_assistant = "ASSISTANT"
-secret_key = "SECRET"
+#-------------------------- TOM Secrets
+openai_key = st.secrets["openai_key"]
+default_assistant = st.secrets["default_assistant"]
+secret_key = st.secrets["secret_key"]
 ```
 
-Additionally there are settings for plain text and setting a .env. Uncomment and commment the ones needed.
+Additionally there are settings for plain text and setting a .env. Uncomment and comment the ones needed.
 
 ```
-#For Plain text for running locally or testing
-# api_key = ""
+#------------------------------ Local Quick Keying
+# openai_key = ""
 # default_assistant = ""
 # secret_key = ""
 
-#.env
-# api_key = os.environ.get("api_key")
+#----------------------------- .env
+# openai_key = os.environ.get("openai_key")
 # default_assistant = os.environ.get("assistant_id")
 # secret_key = os.environ.get("secret_key")
 ```
@@ -49,7 +50,7 @@ This will fetch all the assistants listed on this OpenAI's project account if se
 fetch_assistants = True
 ```
 
-These allow enabling and disabling of fileupload/youtube/website scraping
+Flags for enabling/disabling features
 
 ```
 disable_youtube = True
@@ -72,7 +73,7 @@ www.yourStreamLitAssistant.com/?secretkey=SECRET
 ```
 
 ```
- python -m streamlit run PATH:\\AssistantStreamLit-Simplified.py
+ python -m streamlit run PATH:\\OpenAI_Streamlit_Assistants.py
 ```
 
 # Hosting your App:
